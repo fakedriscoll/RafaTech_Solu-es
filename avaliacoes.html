@@ -3,19 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avaliações - RafaTech Soluções  </title>
+    <title>Avaliações - RafaTech</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <link rel="icon" href="img/favicon.png" type="image/png">
 </head>
 <body class="font-sans bg-gray-50">
     <!-- Header/Navigation -->
     <header class="bg-blue-900 text-white shadow-lg sticky top-0 z-50">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center">
-                <i class="fas fa-microchip text-blue-300 text-2xl mr-2"></i>
-                <h1 class="text-xl md:text-2xl font-bold">Rafa<span class="text-blue-300">Tech Soluções</span></h1>
+                <img src="img/logo.png" alt="RafaTech Logo" class="h-8 mr-2">
+                <h1 class="text-xl md:text-2xl font-bold">Rafa<span class="text-blue-300">Tech</span></h1>
             </div>
             
             <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
@@ -29,7 +34,7 @@
                 <a href="index.html#sobre" class="hover:text-blue-300 transition">Sobre</a>
                 <a href="index.html#contato" class="hover:text-blue-300 transition">Contato</a>
                 <a href="avaliacoes.html" class="hover:text-blue-300 transition">Avaliações</a>
-                <a href="login.html" id="login-link" class="text-blue-300 transition">Login</a>
+                <a href="login.html" id="login-link" class="text-blue-300 transition login-link">Login</a>
             </nav>
         </div>
         
@@ -42,7 +47,7 @@
                 <a href="index.html#sobre" class="hover:text-blue-300 transition">Sobre</a>
                 <a href="index.html#contato" class="hover:text-blue-300 transition">Contato</a>
                 <a href="avaliacoes.html" class="hover:text-blue-300 transition">Avaliações</a>
-                <a href="login.html" id="mobile-login-link" class="text-blue-300 transition">Login</a>
+                <a href="login.html" id="mobile-login-link" class="text-blue-300 transition login-link">Login</a>
             </div>
         </div>
     </header>
@@ -63,158 +68,14 @@
                 </div>
             </div>
             
+            <!-- Status Message -->
+            <div id="status-message" class="hidden mb-6 p-4 rounded-lg text-center"></div>
+            
             <!-- Avaliações Container -->
             <div id="avaliacoes-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                 <!-- As avaliações serão carregadas dinamicamente via JavaScript -->
-                
-                <!-- Exemplo de Avaliação 1 -->
-                <div class="avaliacao-card bg-white p-6 rounded-lg shadow-md" data-categoria="celulares">
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 rounded-full bg-gray-300 mr-4 overflow-hidden flex items-center justify-center">
-                            <i class="fas fa-user text-2xl text-gray-500"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold">Ana Carolina</h4>
-                            <div class="flex text-yellow-400 text-sm">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <h5 class="font-semibold mb-2">Troca de Tela Perfeita</h5>
-                    <p class="text-gray-600 mb-3">"Minha tela estava quebrada e precisava do celular urgente para trabalho. RafaTech conseguiu fazer o reparo em menos de 2 horas com qualidade excelente!"</p>
-                    <div class="text-sm text-gray-500">
-                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Troca de Tela</span>
-                        <span class="ml-2">15/05/2023</span>
-                    </div>
-                </div>
-                
-                <!-- Exemplo de Avaliação 2 -->
-                <div class="avaliacao-card bg-white p-6 rounded-lg shadow-md" data-categoria="tablets">
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 rounded-full bg-gray-300 mr-4 overflow-hidden flex items-center justify-center">
-                            <i class="fas fa-user text-2xl text-gray-500"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold">Roberto Silva</h4>
-                            <div class="flex text-yellow-400 text-sm">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <h5 class="font-semibold mb-2">Tablet como novo!</h5>
-                    <p class="text-gray-600 mb-3">"Meu tablet estava muito lento e com a bateria viciada. Após a manutenção na RafaTech, parece que comprei um novo! Rápido e com ótima duração de bateria."</p>
-                    <div class="text-sm text-gray-500">
-                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Manutenção de Tablets</span>
-                        <span class="ml-2">03/06/2023</span>
-                    </div>
-                </div>
-                
-                <!-- Exemplo de Avaliação 3 -->
-                <div class="avaliacao-card bg-white p-6 rounded-lg shadow-md" data-categoria="notebooks">
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 rounded-full bg-gray-300 mr-4 overflow-hidden flex items-center justify-center">
-                            <i class="fas fa-user text-2xl text-gray-500"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold">Marcelo Alves</h4>
-                            <div class="flex text-yellow-400 text-sm">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <h5 class="font-semibold mb-2">Upgrade de notebook excelente</h5>
-                    <p class="text-gray-600 mb-3">"Fiz um upgrade no meu notebook antigo, trocando o HD por SSD e aumentando a memória RAM. A diferença é impressionante! Agora consigo trabalhar sem travamentos."</p>
-                    <div class="text-sm text-gray-500">
-                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Upgrade de Hardware</span>
-                        <span class="ml-2">22/05/2023</span>
-                    </div>
-                </div>
-                
-                <!-- Exemplo de Avaliação 4 -->
-                <div class="avaliacao-card bg-white p-6 rounded-lg shadow-md" data-categoria="eletronicos">
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 rounded-full bg-gray-300 mr-4 overflow-hidden flex items-center justify-center">
-                            <i class="fas fa-user text-2xl text-gray-500"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold">Paulo Mendonça</h4>
-                            <div class="flex text-yellow-400 text-sm">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <h5 class="font-semibold mb-2">Projeto de automação incrível</h5>
-                    <p class="text-gray-600 mb-3">"Contratei a RafaTech para desenvolver um projeto de automação para minha casa. O resultado superou minhas expectativas! Tudo funciona perfeitamente e o suporte é excelente."</p>
-                    <div class="text-sm text-gray-500">
-                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Projetos Eletrônicos</span>
-                        <span class="ml-2">10/06/2023</span>
-                    </div>
-                </div>
-                
-                <!-- Exemplo de Avaliação 5 (com classificação média) -->
-                <div class="avaliacao-card bg-white p-6 rounded-lg shadow-md" data-categoria="celulares">
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 rounded-full bg-gray-300 mr-4 overflow-hidden flex items-center justify-center">
-                            <i class="fas fa-user text-2xl text-gray-500"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold">Fernanda Costa</h4>
-                            <div class="flex text-yellow-400 text-sm">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="far fa-star"></i>
-                                <i class="far fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <h5 class="font-semibold mb-2">Atendimento bom, mas demorado</h5>
-                    <p class="text-gray-600 mb-3">"O serviço foi bem feito, mas demorou mais do que o prometido. Fiquei sem celular por 3 dias quando me disseram que seria apenas 1 dia."</p>
-                    <div class="text-sm text-gray-500">
-                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Troca de Bateria</span>
-                        <span class="ml-2">05/06/2023</span>
-                    </div>
-                </div>
-                
-                <!-- Exemplo de Avaliação 6 (com classificação ruim) -->
-                <div class="avaliacao-card bg-white p-6 rounded-lg shadow-md" data-categoria="notebooks">
-                    <div class="flex items-center mb-4">
-                        <div class="w-12 h-12 rounded-full bg-gray-300 mr-4 overflow-hidden flex items-center justify-center">
-                            <i class="fas fa-user text-2xl text-gray-500"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold">Ricardo Oliveira</h4>
-                            <div class="flex text-yellow-400 text-sm">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="far fa-star"></i>
-                                <i class="far fa-star"></i>
-                                <i class="far fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <h5 class="font-semibold mb-2">Problema não resolvido</h5>
-                    <p class="text-gray-600 mb-3">"Levei meu notebook para resolver um problema de superaquecimento, mas após a manutenção o problema continuou. Tive que levar em outro lugar."</p>
-                    <div class="text-sm text-gray-500">
-                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Limpeza e Manutenção</span>
-                        <span class="ml-2">01/06/2023</span>
-                    </div>
+                <div class="avaliacao-loading flex justify-center items-center col-span-full py-12">
+                    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
                 </div>
             </div>
             
@@ -357,6 +218,7 @@
         </div>
     </footer>
 
+    <script src="cammon.js"></script>
     <script src="avaliacoes.js"></script>
 </body>
 </html>
