@@ -1,259 +1,215 @@
-// Configuração do Firebase
-const firebaseConfig = {
-    apiKey: "AIzaSyBXOABPeUk6wV6yF6d0JoL2f0h1Rm4cjio    ",
-    authDomain: "rafatech-solucoes.firebaseapp.com",
-    projectId: "rafatech-solucoes",
-    storageBucket: "rafatech-solucoes.firebasestorage.app",
-    messagingSenderId: "95771610184",
-    appId: "1:95771610184:web:b13d24bb55392e4d3f0119"
-};
-
-// Inicializar o Firebase
-const app = firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-
-// Função para mostrar mensagem de status
-function showStatusMessage(message, isError = false) {
-    const statusElement = document.getElementById('status-message');
-    statusElement.textContent = message;
-    statusElement.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - RafaTech</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="img/favicon.png" type="image/png">
     
-    if (isError) {
-        statusElement.classList.add('bg-red-100', 'text-red-800');
-    } else {
-        statusElement.classList.add('bg-green-100', 'text-green-800');
-    }
-    
-    statusElement.classList.remove('hidden');
-    
-    // Esconder a mensagem após 5 segundos
-    setTimeout(() => {
-        statusElement.classList.add('hidden');
-    }, 5000);
-}
-
-// Tabs functionality
-document.getElementById('login-tab').addEventListener('click', function() {
-    document.getElementById('login-form').classList.remove('hidden');
-    document.getElementById('register-form').classList.add('hidden');
-    document.getElementById('login-tab').classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
-    document.getElementById('login-tab').classList.remove('text-gray-500');
-    document.getElementById('register-tab').classList.add('text-gray-500');
-    document.getElementById('register-tab').classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
-});
-
-document.getElementById('register-tab').addEventListener('click', function() {
-    document.getElementById('register-form').classList.remove('hidden');
-    document.getElementById('login-form').classList.add('hidden');
-    document.getElementById('register-tab').classList.add('text-blue-600', 'border-b-2', 'border-blue-600');
-    document.getElementById('register-tab').classList.remove('text-gray-500');
-    document.getElementById('login-tab').classList.add('text-gray-500');
-    document.getElementById('login-tab').classList.remove('text-blue-600', 'border-b-2', 'border-blue-600');
-});
-
-// Mobile menu toggle
-document.getElementById('mobile-menu-button').addEventListener('click', function() {
-    const menu = document.getElementById('mobile-menu');
-    menu.classList.toggle('hidden');
-});
-
-// Login form submission
-document.getElementById('login-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    
-    // Validação básica
-    if (!email || !password) {
-        showStatusMessage('Por favor, preencha todos os campos.', true);
-        return;
-    }
-    
-    // Autenticar com Firebase
-    auth.signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            // Login bem-sucedido
-            const user = userCredential.user;
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+</head>
+<body class="font-sans bg-gray-50">
+    <!-- Header/Navigation -->
+    <header class="bg-blue-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center">
+                <img src="img/favicon.png" alt="RafaTech Logo" class="h-8 mr-2">
+                <h1 class="text-xl md:text-2xl font-bold">Rafa<span class="text-blue-300">Tech</span></h1>
+            </div>
             
-            // Salvar sessão do usuário
-            localStorage.setItem('rafatech_current_user', JSON.stringify({
-                uid: user.uid,
-                email: user.email,
-                displayName: user.displayName || email.split('@')[0],
-                loggedIn: true
-            }));
+            <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
             
-            showStatusMessage('Login realizado com sucesso!');
-            
-            // Redirecionar após 1 segundo
-            setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 1000);
-        })
-        .catch((error) => {
-            // Tratar erros de autenticação
-            let errorMessage;
-            
-            switch (error.code) {
-                case 'auth/user-not-found':
-                    errorMessage = 'Usuário não encontrado.';
-                    break;
-                case 'auth/wrong-password':
-                    errorMessage = 'Senha incorreta.';
-                    break;
-                case 'auth/invalid-email':
-                    errorMessage = 'E-mail inválido.';
-                    break;
-                case 'auth/user-disabled':
-                    errorMessage = 'Usuário desativado.';
-                    break;
-                default:
-                    errorMessage = 'Erro ao fazer login: ' + error.message;
-            }
-            
-            showStatusMessage(errorMessage, true);
-        });
-});
-
-// Register form submission
-document.getElementById('register-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const name = document.getElementById('register-name').value;
-    const email = document.getElementById('register-email').value;
-    const password = document.getElementById('register-password').value;
-    const confirmPassword = document.getElementById('register-confirm-password').value;
-    
-    // Validação básica
-    if (!name || !email || !password || !confirmPassword) {
-        showStatusMessage('Por favor, preencha todos os campos.', true);
-        return;
-    }
-    
-    if (password !== confirmPassword) {
-        showStatusMessage('As senhas não coincidem.', true);
-        return;
-    }
-    
-    if (password.length < 6) {
-        showStatusMessage('A senha deve ter pelo menos 6 caracteres.', true);
-        return;
-    }
-    
-    // Criar usuário no Firebase
-    auth.createUserWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            // Cadastro bem-sucedido
-            const user = userCredential.user;
-            
-            // Atualizar o perfil do usuário com o nome
-            return user.updateProfile({
-                displayName: name
-            }).then(() => {
-                // Salvar sessão do usuário
-                localStorage.setItem('rafatech_current_user', JSON.stringify({
-                    uid: user.uid,
-                    email: user.email,
-                    displayName: name,
-                    loggedIn: true
-                }));
-                
-                showStatusMessage('Cadastro realizado com sucesso!');
-                
-                // Redirecionar após 1 segundo
-                setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1000);
-            });
-        })
-        .catch((error) => {
-            // Tratar erros de cadastro
-            let errorMessage;
-            
-            switch (error.code) {
-                case 'auth/email-already-in-use':
-                    errorMessage = 'Este e-mail já está em uso.';
-                    break;
-                case 'auth/invalid-email':
-                    errorMessage = 'E-mail inválido.';
-                    break;
-                case 'auth/weak-password':
-                    errorMessage = 'Senha muito fraca.';
-                    break;
-                default:
-                    errorMessage = 'Erro ao criar conta: ' + error.message;
-            }
-            
-            showStatusMessage(errorMessage, true);
-        });
-});
-
-// Esqueceu a senha
-document.getElementById('forgot-password').addEventListener('click', function(e) {
-    e.preventDefault();
-    
-    const email = document.getElementById('login-email').value;
-    
-    if (!email) {
-        showStatusMessage('Por favor, informe seu e-mail para recuperar a senha.', true);
-        return;
-    }
-    
-    auth.sendPasswordResetEmail(email)
-        .then(() => {
-            showStatusMessage('E-mail de recuperação de senha enviado. Verifique sua caixa de entrada.');
-        })
-        .catch((error) => {
-            let errorMessage;
-            
-            switch (error.code) {
-                case 'auth/invalid-email':
-                    errorMessage = 'E-mail inválido.';
-                    break;
-                case 'auth/user-not-found':
-                    errorMessage = 'Usuário não encontrado.';
-                    break;
-                default:
-                    errorMessage = 'Erro ao enviar e-mail de recuperação: ' + error.message;
-            }
-            
-            showStatusMessage(errorMessage, true);
-        });
-});
-
-// Verificar estado de autenticação ao carregar a página
-document.addEventListener('DOMContentLoaded', function() {
-    auth.onAuthStateChanged(function(user) {
-        if (user) {
-            // Usuário está logado
-            localStorage.setItem('rafatech_current_user', JSON.stringify({
-                uid: user.uid,
-                email: user.email,
-                displayName: user.displayName || user.email.split('@')[0],
-                loggedIn: true
-            }));
-        } else {
-            // Usuário não está logado
-            localStorage.removeItem('rafatech_current_user');
-        }
-    });
-});
-
-// Toggle password visibility
-document.querySelectorAll('.toggle-password').forEach(function(toggle) {
-    toggle.addEventListener('click', function() {
-        const passwordField = this.parentElement.previousElementSibling.querySelector('input[type="password"]');
+            <nav class="hidden md:flex space-x-6">
+                <a href="index.html#inicio" class="hover:text-blue-300 transition">Início</a>
+                <a href="index.html#servicos" class="hover:text-blue-300 transition">Serviços</a>
+                <a href="index.html#acessorios" class="hover:text-blue-300 transition">Acessórios</a>
+                <a href="index.html#sobre" class="hover:text-blue-300 transition">Sobre</a>
+                <a href="index.html#contato" class="hover:text-blue-300 transition">Contato</a>
+                <a href="avaliacoes.html" class="hover:text-blue-300 transition">Avaliações</a>
+                <a href="login.html" class="text-blue-300 transition">Login</a>
+            </nav>
+        </div>
         
-        if (passwordField.type === 'password') {
-            passwordField.type = 'text';
-            this.classList.remove('fa-eye');
-            this.classList.add('fa-eye-slash');
-        } else {
-            passwordField.type = 'password';
-            this.classList.remove('fa-eye-slash');
-            this.classList.add('fa-eye');
-        }
-    });
-});
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-blue-800 text-white py-3 px-4">
+            <div class="flex flex-col space-y-3">
+                <a href="index.html#inicio" class="hover:text-blue-300 transition">Início</a>
+                <a href="index.html#servicos" class="hover:text-blue-300 transition">Serviços</a>
+                <a href="index.html#acessorios" class="hover:text-blue-300 transition">Acessórios</a>
+                <a href="index.html#sobre" class="hover:text-blue-300 transition">Sobre</a>
+                <a href="index.html#contato" class="hover:text-blue-300 transition">Contato</a>
+                <a href="avaliacoes.html" class="hover:text-blue-300 transition">Avaliações</a>
+                <a href="login.html" class="text-blue-300 transition">Login</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Login Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-md mx-auto bg-gray-50 rounded-lg shadow-md p-8 border border-gray-200">
+                <div class="text-center mb-8">
+                    <img src="img/logo.png" alt="RafaTech Logo" class="h-24 mx-auto mb-4">
+                    <h2 class="text-3xl font-bold text-gray-800">Acesso ao <span class="text-blue-600">Sistema</span></h2>
+                    <p class="text-gray-600 mt-2">Entre com suas credenciais para acessar o sistema</p>
+                </div>
+                
+                <!-- Tabs -->
+                <div class="flex border-b border-gray-200 mb-6">
+                    <button id="login-tab" class="flex-1 py-2 text-center text-blue-600 border-b-2 border-blue-600 font-medium">Login</button>
+                    <button id="register-tab" class="flex-1 py-2 text-center text-gray-500 font-medium">Cadastro</button>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="login-form" class="space-y-6">
+                    <div>
+                        <label for="login-email" class="block text-gray-700 mb-2">E-mail</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-envelope text-gray-400"></i>
+                            </div>
+                            <input type="email" id="login-email" name="email" class="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="seu@email.com" required>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="login-password" class="block text-gray-700 mb-2">Senha</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-lock text-gray-400"></i>
+                            </div>
+                            <input type="password" id="login-password" name="password" class="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••" required>
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                <i class="fas fa-eye text-gray-400 cursor-pointer toggle-password"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="remember" name="remember" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="remember" class="ml-2 block text-sm text-gray-700">Lembrar-me</label>
+                        </div>
+                        <a href="#" id="forgot-password" class="text-sm text-blue-600 hover:text-blue-800">Esqueceu a senha?</a>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition">Entrar</button>
+                </form>
+                
+                <!-- Register Form -->
+                <form id="register-form" class="space-y-6 hidden">
+                    <div>
+                        <label for="register-name" class="block text-gray-700 mb-2">Nome Completo</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-user text-gray-400"></i>
+                            </div>
+                            <input type="text" id="register-name" name="name" class="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Seu nome completo" required>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="register-email" class="block text-gray-700 mb-2">E-mail</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-envelope text-gray-400"></i>
+                            </div>
+                            <input type="email" id="register-email" name="email" class="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="seu@email.com" required>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="register-password" class="block text-gray-700 mb-2">Senha</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-lock text-gray-400"></i>
+                            </div>
+                            <input type="password" id="register-password" name="password" class="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••" required>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="register-confirm-password" class="block text-gray-700 mb-2">Confirmar Senha</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-lock text-gray-400"></i>
+                            </div>
+                            <input type="password" id="register-confirm-password" name="confirm-password" class="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition">Cadastrar</button>
+                </form>
+                
+                <!-- Status Messages -->
+                <div id="status-message" class="mt-4 p-3 rounded-lg hidden"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Sobre Nós</h3>
+                    <p class="text-gray-400">A RafaTech oferece soluções tecnológicas completas, com foco em qualidade e atendimento personalizado.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Links Rápidos</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="index.html#inicio" class="hover:text-blue-300 transition">Início</a></li>
+                        <li><a href="index.html#servicos" class="hover:text-blue-300 transition">Serviços</a></li>
+                        <li><a href="index.html#acessorios" class="hover:text-blue-300 transition">Acessórios</a></li>
+                        <li><a href="index.html#sobre" class="hover:text-blue-300 transition">Sobre</a></li>
+                        <li><a href="index.html#contato" class="hover:text-blue-300 transition">Contato</a></li>
+                        <li><a href="avaliacoes.html" class="hover:text-blue-300 transition">Avaliações</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Contato</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><i class="fas fa-map-marker-alt mr-2 text-blue-300"></i> Rua Celulares, 123 - Centro</li>
+                        <li><i class="fas fa-phone-alt mr-2 text-blue-300"></i> (11) 98765-4321</li>
+                        <li><i class="fas fa-envelope mr-2 text-blue-300"></i> contato@rafatech.com.br</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Redes Sociais</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-blue-300 transition text-2xl">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-blue-300 transition text-2xl">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-blue-300 transition text-2xl">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-blue-300 transition text-2xl">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2023 RafaTech Soluções Tecnológicas. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="login.js"></script>
+</body>
+</html>
 
