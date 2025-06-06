@@ -1,11 +1,11 @@
 // Configuração do Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyBXOABPeUk6wV6yF6d8JoL2f0h1Rm4cjio",
-    authDomain: "rafatech-solucoes.firebaseapp.com",
-    projectId: "rafatech-solucoes",
-    storageBucket: "rafatech-solucoes.firebasestorage.app",
-    messagingSenderId: "95771610184",
-    appId: "1:95771610184:web:b13d24bb55392e4d3f0119"
+  apiKey: "AIzaSyBXOABPeUk6wV6yF6d0JoL2f0h1Rm4cjio",
+  authDomain: "rafatech-solucoes.firebaseapp.com",
+  projectId: "rafatech-solucoes",
+  storageBucket: "rafatech-solucoes.firebasestorage.app",
+  messagingSenderId: "957716101084",
+  appId: "1:957716101084:web:b13d24bb55392efd3f0119"
 };
 
 // Inicializar o Firebase se ainda não estiver inicializado
